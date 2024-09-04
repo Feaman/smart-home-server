@@ -76,7 +76,6 @@ app.get(
         'sensor.humidity_hall',
 
         'input_boolean.night_mode',
-        'input_boolean.hallway_persist_mode',
         'input_boolean.bathroom_bathing_mode',
         'input_boolean.big_room_night_mode',
 
@@ -84,6 +83,7 @@ app.get(
         'light.light_small_room_night_light',
         'switch.wall_switch_hall_light',
         'switch.wall_switch_kitchen_light_left',
+        'group.hallway_lights',
       ]
       const result = data
         .filter( entity => allowedEntities.includes(entity.entity_id))
