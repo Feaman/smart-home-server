@@ -24,7 +24,7 @@ server.listen(PORT, async function () {
   console.log(`Application server started on port ${PORT}`)
 })
 
-function httpRequest(params: RequestOptions, data?: { entity_id: string }): Promise<{ entity_id: string, state: string }[]> {
+function httpRequest(params: RequestOptions, data?: { entity_id: string }): Promise<{ entity_id: string, state: string, attributes: [] }[]> {
   return new Promise(function (resolve, reject) {
     const request = http.request(params, function (response) {
       if (Number(response.statusCode) < 200 || Number(response.statusCode) >= 300) {
@@ -84,10 +84,23 @@ app.get(
         'switch.wall_switch_hall_light',
         'switch.wall_switch_kitchen_light_left',
         'group.hallway_lights',
+        'timer.vikki_play_off',
+        'binary_sensor.door_hallway',
+        'input_boolean.kitchen_extra_light',
+
+        'binary_sensor.body_kitchen_main',
+        'binary_sensor.body_bathroom_main',
+        'binary_sensor.body_big_room_main',
+        'binary_sensor.body_toilet_main',
+        'binary_sensor.body_hall_main_presence',
+        'binary_sensor.body_hallway_main',
+        'binary_sensor.body_hallway_main_2',
+        'binary_sensor.body_corridor_small_room_door',
+        'binary_sensor.body_corridor_big_room_door',
       ]
       const result = data
         .filter( entity => allowedEntities.includes(entity.entity_id))
-        .map(entity => ({ id: entity.entity_id, state: entity.state }))
+        .map(entity => ({ id: entity.entity_id, state: entity.state, attributes: entity.attributes }))
 
       return response.status(200).json(result)
     } catch (error) {
@@ -96,15 +109,34 @@ app.get(
   },
 )
 
-app.post('/toggle/:domain', async (request, response, next) => {
-  try {
-    const data = await httpRequest(
-      { ...baseOptions, path: `/api/services/${request.params.domain}/toggle`, method: 'POST' },
+app.get(
+  '/history/:entityId',
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const data = await httpRequest({
+        ...baseOptions,
+        path: `/api/history/period?filter_entity_id=${request.params.entityId}&minimal_response` }
+      )
+      return response.status(200).json(data)
+    } catch (error) {
+      return next(error as Error)
+    }
+  },
+)
+
+app.post(
+  '/call-service/:domain/:service',
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const data = await httpRequest({
+        ...baseOptions,
+        method: 'POST',
+        path: `/api/services/${request.params.domain}/${request.params.service}` },
       { entity_id: request.body.entityId }
-    )
-    return response.status(200).json(data)
-  }
-  catch (error) {
-    return next(error)
-  }
-})
+      )
+      return response.status(200).json(data)
+    } catch (error) {
+      return next(error as Error)
+    }
+  },
+)
