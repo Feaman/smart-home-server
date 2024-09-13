@@ -24,7 +24,7 @@ server.listen(PORT, async function () {
   console.log(`Application server started on port ${PORT}`)
 })
 
-function httpRequest(params: RequestOptions, data?: { entity_id: string }): Promise<{ entity_id: string, state: string, attributes: [] }[]> {
+function httpRequest(params: RequestOptions, data?: { entity_id: string }): Promise<{ entity_id: string, state: string, attributes: { finishes_at?: string } }[]> {
   return new Promise(function (resolve, reject) {
     const request = http.request(params, function (response) {
       if (Number(response.statusCode) < 200 || Number(response.statusCode) >= 300) {
@@ -100,7 +100,13 @@ app.get(
       ]
       const result = data
         .filter( entity => allowedEntities.includes(entity.entity_id))
-        .map(entity => ({ id: entity.entity_id, state: entity.state, attributes: entity.attributes }))
+        .map(entity => {
+          const attributes: { finishes_at?: string } = {}
+          if (entity.attributes && entity.attributes.finishes_at) {
+            attributes.finishes_at = entity.attributes.finishes_at
+          }
+          return { id: entity.entity_id, state: entity.state, attributes }
+        })
 
       return response.status(200).json(result)
     } catch (error) {
