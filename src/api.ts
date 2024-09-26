@@ -1,15 +1,13 @@
 import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
 import http from 'http'
-import { RequestOptions } from 'https'
+import https, { RequestOptions } from 'https'
 import { homeAssistantApiToken } from './secrets'
 
 const PORT = 3018
 
 const baseOptions = {
-  hostname: 'elven-home-smarthome.ru',
-  protocol: 'http:',
-  port: '80',
+  hostname: '82kuw4upppo269komwxifkafhs65x450.ui.nabu.casa',
   path: '',
   method: 'GET',
   headers: { Authorization: `Bearer ${homeAssistantApiToken}` },
@@ -26,7 +24,7 @@ server.listen(PORT, async function () {
 
 function httpRequest(params: RequestOptions, data?: { entity_id: string }): Promise<{ entity_id: string, state: string, attributes: { finishes_at?: string } }[]> {
   return new Promise(function (resolve, reject) {
-    const request = http.request(params, function (response) {
+    const request = https.request(params, function (response) {
       if (Number(response.statusCode) < 200 || Number(response.statusCode) >= 300) {
         return reject(new Error('statusCode=' + response.statusCode))
       }
