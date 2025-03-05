@@ -15,6 +15,7 @@ const baseOptions = {
 
 const app = express()
 app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded());
 app.use(cors())
 
 const server = http.createServer(app)
