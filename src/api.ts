@@ -23,7 +23,7 @@ server.listen(PORT, async function () {
   console.log(`Application server started on port ${PORT}`)
 })
 
-function httpRequest(params: RequestOptions, data?: { entity_id: string }): Promise<{ entity_id: string, state: string, attributes: { finishes_at?: string } }[]> {
+function httpRequest(params: RequestOptions, data?: { entity_id: string }): Promise<{ entity_id: string, state: string, attributes: { finishes_at?: string }, last_changed: string }[]> {
   return new Promise(function (resolve, reject) {
     const request = https.request(params, function (response) {
       if (Number(response.statusCode) < 200 || Number(response.statusCode) >= 300) {
@@ -105,7 +105,7 @@ app.get(
           if (entity.attributes && entity.attributes.finishes_at) {
             attributes.finishes_at = entity.attributes.finishes_at
           }
-          return { id: entity.entity_id, state: entity.state, attributes }
+          return { id: entity.entity_id, state: entity.state, attributes, last_changed: entity.last_changed }
         })
 
       return response.status(200).json(result)
