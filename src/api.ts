@@ -107,7 +107,7 @@ app.get(
             attributes.finishes_at = entity.attributes.finishes_at
           }
           if (entity.entity_id === 'binary_sensor.door_hallway') {
-            lastChanged =entity.last_changed 
+            lastChanged = entity.last_changed 
           }
           return { id: entity.entity_id, state: entity.state, attributes, last_changed: lastChanged }
         })
