@@ -84,6 +84,7 @@ app.get(
         'switch.wall_switch_kitchen_light_left',
         'group.hallway_lights',
         'timer.vikki_play_off',
+        'timer.bathroom_bathing_mode',
         'binary_sensor.door_hallway',
         'input_boolean.kitchen_extra_light',
 
