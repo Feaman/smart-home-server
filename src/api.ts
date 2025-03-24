@@ -102,10 +102,14 @@ app.get(
         .filter( entity => allowedEntities.includes(entity.entity_id))
         .map(entity => {
           const attributes: { finishes_at?: string } = {}
+          let lastChanged = ''
           if (entity.attributes && entity.attributes.finishes_at) {
             attributes.finishes_at = entity.attributes.finishes_at
           }
-          return { id: entity.entity_id, state: entity.state, attributes, last_changed: entity.last_changed }
+          if (entity.entity_id === 'binary_sensor.door_hallway') {
+            lastChanged =entity.last_changed 
+          }
+          return { id: entity.entity_id, state: entity.state, attributes, last_changed: lastChanged }
         })
 
       return response.status(200).json(result)
